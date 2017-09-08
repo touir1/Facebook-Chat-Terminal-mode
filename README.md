@@ -1,7 +1,7 @@
 # Facebook Chat (Terminal mode)
 [![npm](https://img.shields.io/npm/l/date-2.svg?style=flat-square)]()
 
-[website](https://touir1.github.io/Spam-Classifier-machine-learning-Gaussian-Naive-Bayes-/)
+[website](https://touir1.github.io/Facebook-Chat-Terminal-mode/)
 
 Facebook Chat is a python script to chat with facebook account using the terminal
 
