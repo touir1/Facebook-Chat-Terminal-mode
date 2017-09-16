@@ -17,7 +17,12 @@ class User:
     def __init__(self, uid, name):
         self.uid = uid
         self.name = name
-    
+
+def getUserFromUID(users, uid):
+    for user in users:
+        if uid == user.uid:
+            return user
+    return User()
 
 def script():
     (options, args) = parser.parse_args()
@@ -48,7 +53,18 @@ def script():
         quit()
 
     users = [User(u.uid, u.name) for u in client.fetchAllUsers()]
-    print([u.name for u in users])
+    threads = client.fetchThreadList()
+    print('last messages:')
+    for thread in threads:
+        message = client.fetchThreadMessages(thread_id= thread.uid, limit=1)[0]
+        print('------------------------------------------')
+        print(thread.name)
+        print('############')
+        print(message.text)
+        #print(message.__dict__)
+        print('------------------------------------------')
+        
+    #print([a.text for a in messages])
     
 
 if __name__ == "__main__":
