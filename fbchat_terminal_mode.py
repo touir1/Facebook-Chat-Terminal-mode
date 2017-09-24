@@ -3,6 +3,9 @@ from fbchat.models import *
 from optparse import OptionParser
 import os
 import getpass
+import pickle as pkl
+
+_SESSION_FILE = "session.pkl"
 
 def console_clear():
     os.system('clear')
@@ -18,18 +21,22 @@ class User:
         self.uid = uid
         self.name = name
 
-def getUserFromUID(users, uid):
-    for user in users:
-        if uid == user.uid:
-            return user
-    return User()
-
 def script():
     (options, args) = parser.parse_args()
 
     username = None
     password = None
     client = None
+    session = None
+    connectedUID = None
+    connected = None
+    connectedName = None
+
+    try:
+        with open(_SESSION_FILE, 'rb') as inp:
+            session = pkl.load(inp)
+    except Exception as ex:
+        print('no session detected')
 
     if options.username is not None:
         username = options.username
@@ -47,24 +54,34 @@ def script():
         password = getpass.getpass('Password: ')
 
     try:
-        client = Client(username,password)
-    except:
+        client = Client(username,password,session_cookies=session)
+        session = client.getSession()
+        connectedUID = client.uid
+        connected = client.fetchUserInfo(connectedUID)[connectedUID]
+        connectedName = connected.name
+        with open(_SESSION_FILE, 'wb') as f:
+            pkl.dump(session, f)
+    except Exception as ex:
+        print(ex)
         print('Login failed, Check email/password.')
         quit()
 
-    users = [User(u.uid, u.name) for u in client.fetchAllUsers()]
-    threads = client.fetchThreadList()
+    users = {}
+    for u in client.fetchAllUsers():
+        users[u.uid] = u.name
+    users[connectedUID] = connectedName
+    threads = client.fetchThreadList(offset=0, limit=10)
+    randomThread = client.searchForThreads('random')[0]
+    client.sendMessage('random msg from python',thread_id=randomThread.uid, thread_type=randomThread.type)
     print('last messages:')
     for thread in threads:
-        message = client.fetchThreadMessages(thread_id= thread.uid, limit=1)[0]
+        messages = client.fetchThreadMessages(thread_id= thread.uid, limit=20)
         print('------------------------------------------')
         print(thread.name)
-        print('############')
-        print(message.text)
-        #print(message.__dict__)
+        print('########################')
+        for msg in reversed(messages):
+            print(users[msg.author],':',msg.text)
         print('------------------------------------------')
-        
-    #print([a.text for a in messages])
     
 
 if __name__ == "__main__":
