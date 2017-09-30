@@ -6,11 +6,9 @@ import getpass
 import pickle as pkl
 import hashlib
 import sys
+import principalScreen
 
 _SESSION_FILE = "sessions.pkl"
-
-def console_clear():
-    os.system('clear')
 
 parser = OptionParser(usage='Usage: %prog [options]')
 parser.add_option("-c", "--username", dest="username",
@@ -25,7 +23,7 @@ class User:
 
 class Session:
     def __init__(self, username, password, session):
-        toEncode = username+':'+password
+        toEncode = username.lower()+':'+password
         self.authdata = hashlib.sha512(toEncode.encode()).hexdigest()
         self.session = session
 
@@ -66,7 +64,7 @@ def script():
         password = getpass.getpass('Password: ')
 
     try:
-        toEncode = username+':'+password
+        toEncode = username.lower()+':'+password
         authdata = hashlib.sha512(toEncode.encode()).hexdigest()
         index = -1
         for idx,s in enumerate(sessions):
@@ -95,22 +93,25 @@ def script():
     for u in client.fetchAllUsers():
         users[u.uid] = u.name
     users[connectedUID] = connectedName
-    threads = client.fetchThreadList(offset=0, limit=10)
+
+    principalScreen.script(client, session)
+    
     #randomThread = client.searchForThreads('random')[0]
     #client.sendMessage('random msg from python',thread_id=randomThread.uid, thread_type=randomThread.type)
-    print('last messages:')
-    for thread in threads:
-        messages = client.fetchThreadMessages(thread_id= thread.uid, limit=20)
-        print('------------------------------------------')
-        print(thread.name)
-        print('########################')
-        for msg in reversed(messages):
-            m = None
-            if msg.text is not None:
-                m = msg.text.translate(non_bmp_map)
-            print(users[msg.author],':',m)
-        print('------------------------------------------')
-    
+
+##    print('last messages:')
+##    threads = client.fetchThreadList(offset=0, limit=10)
+##    for thread in threads:
+##        messages = client.fetchThreadMessages(thread_id= thread.uid, limit=20)
+##        print('------------------------------------------')
+##        print(thread.name)
+##        print('########################')
+##        for msg in reversed(messages):
+##            m = None
+##            if msg.text is not None:
+##                m = msg.text.translate(non_bmp_map)
+##            print(users[msg.author],':',m)
+##        print('------------------------------------------')
 
 if __name__ == "__main__":
     script()
