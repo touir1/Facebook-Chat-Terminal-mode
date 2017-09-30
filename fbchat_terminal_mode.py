@@ -4,8 +4,10 @@ from optparse import OptionParser
 import os
 import getpass
 import pickle as pkl
+import hashlib
+import sys
 
-_SESSION_FILE = "session.pkl"
+_SESSION_FILE = "sessions.pkl"
 
 def console_clear():
     os.system('clear')
@@ -21,20 +23,30 @@ class User:
         self.uid = uid
         self.name = name
 
+class Session:
+    def __init__(self, username, password, session):
+        toEncode = username+':'+password
+        self.authdata = hashlib.sha512(toEncode.encode()).hexdigest()
+        self.session = session
+
+non_bmp_map = dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)
+
 def script():
     (options, args) = parser.parse_args()
 
     username = None
     password = None
     client = None
+    sessions = []
     session = None
+    authdata = None
     connectedUID = None
     connected = None
     connectedName = None
 
     try:
         with open(_SESSION_FILE, 'rb') as inp:
-            session = pkl.load(inp)
+            sessions = pkl.load(inp)
     except Exception as ex:
         print('no session detected')
 
@@ -54,13 +66,26 @@ def script():
         password = getpass.getpass('Password: ')
 
     try:
+        toEncode = username+':'+password
+        authdata = hashlib.sha512(toEncode.encode()).hexdigest()
+        index = -1
+        for idx,s in enumerate(sessions):
+            if s.authdata == authdata:
+                session = s.session
+                index = idx
+                break
         client = Client(username,password,session_cookies=session)
         session = client.getSession()
+        if index!=-1:
+            sessions[index].session = session
+        else:
+            sessions.append(Session(username,password,session))
+            
         connectedUID = client.uid
         connected = client.fetchUserInfo(connectedUID)[connectedUID]
         connectedName = connected.name
         with open(_SESSION_FILE, 'wb') as f:
-            pkl.dump(session, f)
+            pkl.dump(sessions, f)
     except Exception as ex:
         print(ex)
         print('Login failed, Check email/password.')
@@ -71,8 +96,8 @@ def script():
         users[u.uid] = u.name
     users[connectedUID] = connectedName
     threads = client.fetchThreadList(offset=0, limit=10)
-    randomThread = client.searchForThreads('random')[0]
-    client.sendMessage('random msg from python',thread_id=randomThread.uid, thread_type=randomThread.type)
+    #randomThread = client.searchForThreads('random')[0]
+    #client.sendMessage('random msg from python',thread_id=randomThread.uid, thread_type=randomThread.type)
     print('last messages:')
     for thread in threads:
         messages = client.fetchThreadMessages(thread_id= thread.uid, limit=20)
@@ -80,7 +105,10 @@ def script():
         print(thread.name)
         print('########################')
         for msg in reversed(messages):
-            print(users[msg.author],':',msg.text)
+            m = None
+            if msg.text is not None:
+                m = msg.text.translate(non_bmp_map)
+            print(users[msg.author],':',m)
         print('------------------------------------------')
     
 
