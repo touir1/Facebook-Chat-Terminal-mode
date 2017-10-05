@@ -1,4 +1,7 @@
 import os
+import sys
+
+non_bmp_map = dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)
 
 def to_int(var):
     try:
@@ -12,3 +15,8 @@ def console_clear():
         os.system('cls')
     else:
         os.system('clear')
+
+def toUTF8(string):
+    if string is not None:
+        return string.translate(non_bmp_map)
+    return None

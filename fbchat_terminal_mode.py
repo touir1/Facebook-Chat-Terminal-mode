@@ -11,7 +11,7 @@ import principalScreen
 _SESSION_FILE = "sessions.pkl"
 
 parser = OptionParser(usage='Usage: %prog [options]')
-parser.add_option("-c", "--username", dest="username",
+parser.add_option("-u", "--username", dest="username",
                   help="the username for the facebook account", metavar="USER")
 parser.add_option("-v", "--password", dest="password",
                   help="the password for the facebook account", metavar="PASSWORD")
@@ -27,7 +27,7 @@ class Session:
         self.authdata = hashlib.sha512(toEncode.encode()).hexdigest()
         self.session = session
 
-non_bmp_map = dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)
+
 
 def script():
     (options, args) = parser.parse_args()
@@ -57,7 +57,7 @@ def script():
         print('error: you need to set the username and the password')
         quit()
     if username is not None and password is None:
-        password = getpass.getpass('Password:')
+        password = getpass.getpass('Password: ')
     if username is None and password is None:
         print('Username: ', end='', flush=True)
         username = input()
@@ -94,7 +94,7 @@ def script():
         users[u.uid] = u.name
     users[connectedUID] = connectedName
 
-    principalScreen.script(client, session)
+    principalScreen.openScreen(client, session)
     
     #randomThread = client.searchForThreads('random')[0]
     #client.sendMessage('random msg from python',thread_id=randomThread.uid, thread_type=randomThread.type)
