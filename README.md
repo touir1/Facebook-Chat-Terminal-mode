@@ -60,7 +60,7 @@ message: message of the mail encoded in url format
 
 ## License ##
 
-Spam Classifier is published under the [MIT license](http://www.opensource.org/licenses/mit-license)
+Facebook chat Terminal Mode is published under the [MIT license](http://www.opensource.org/licenses/mit-license)
 
 ## Special thanks ##
 
