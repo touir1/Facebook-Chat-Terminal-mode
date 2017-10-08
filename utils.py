@@ -10,6 +10,13 @@ def to_int(var):
     except:
         return 0
 
+def isInt(var):
+    try:
+        result = int(var)
+        return True
+    except:
+        return False
+
 def console_clear():
     if os.name == 'nt':
         os.system('cls')
