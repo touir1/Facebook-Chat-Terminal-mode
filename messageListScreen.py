@@ -63,4 +63,5 @@ def openScreen(client, session):
                 offset -= jump
         elif isInt(choice) and (1 <= to_int(choice) <= jump):
             sendMessageScreen.openScreen(client,session,threads[to_int(choice)-1])
+            break
             
