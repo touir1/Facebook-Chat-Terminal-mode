@@ -11,6 +11,14 @@ import sys
 
 inputToSend = Buffer()
 
+def printLoop(client,buffer,session):
+    try:
+        while not client.isStopThread():
+            reprintScreen(client, buffer, inputToSend)
+            time.sleep(0.2)
+    except KeyboardInterrupt:
+        client.stopThread()
+        messageListScreen.openScreen(client, session)
 
 def receive(client,buffer):
     threadName = client.getThreadName()
@@ -20,9 +28,37 @@ def receive(client,buffer):
         #reprintScreen(client,buffer,inputToSend)
         while (client.isThereMessage()):
             #print('\n[' + threadName + ']: ' + client.getMessage())
-            buffer.addToBuffer('\n[' + threadName + ']: ' + client.getMessage() + '\n')
+            buffer.addToBuffer('[' + threadName + ']: ' + client.getMessage() + '\n')
             reprintScreen(client, buffer, inputToSend)
         #time.sleep(0.2)
+
+def send(client,session,thread,buffer):
+    try:
+        while not client.isStopThread():
+            # print('[' + client.getUser().name + ']: ', end='', flush=True)
+            inputToSend.clearBuffer()
+            reprintScreen(client, buffer, inputToSend)
+            while True:
+                c = getchar()
+                if ord(c) == 13 or ord(c) == 10:
+                    break
+                if ord(c) == 3:
+                    client.stopThread()
+                    messageListScreen.openScreen(client, session)
+
+                inputToSend.addChar(c)
+                reprintScreen(client, buffer, inputToSend)
+                # toSendMessage += repr(c)
+            # toSendMessage = input('[' + client.getUser().name + ']: ')
+            buffer.addToBuffer('[' + client.getUser().name + ']: ' + inputToSend.getBuffer() + '\n')
+            if inputToSend.getBuffer() == '/exit':
+                client.stopThread()
+                messageListScreen.openScreen(client, session)
+                break
+            client.sendMessage(inputToSend.getBuffer(), thread_id=thread.uid, thread_type=thread.type)
+    except KeyboardInterrupt:
+        client.stopThread()
+        messageListScreen.openScreen(client, session)
 
 
 def reprintScreen(client,buffer,inputBuffer):
@@ -50,8 +86,8 @@ def openScreen(client,session,thread):
     if thread is not None:
         messages = client.fetchThreadMessages(thread_id=thread.uid, limit=10)
         console_clear()
-        buffer.addToBuffer('---- Type CTRL+C to get back to messages list menu ----\n')
-        print('---- Type CTRL+C to get back to messages list menu ----')
+        buffer.addToBuffer('---- Type /exit to get back to messages list menu ----\n')
+        print('---- Type /exit to get back to messages list menu ----')
         try:
             for msg in reversed(messages):
                 toPrintMsg = '['+client.fetchThreadInfo(msg.author)[msg.author].name+']: '+toUTF8(msg.text)
@@ -86,28 +122,16 @@ def openScreen(client,session,thread):
                     pass
 
             client.startThread(thread.uid)
-            receiveThread = Thread(target = receive, args = (client,buffer,))
+            receiveThread = Thread(target=receive, args=(client,buffer,))
             receiveThread.deamon = True
             receiveThread.start()
-
-            while True:
-                #print('[' + client.getUser().name + ']: ', end='', flush=True)
-                inputToSend.clearBuffer()
-                reprintScreen(client,buffer,inputToSend)
-                while True:
-                    c = getchar()
-                    if ord(c) == 13 or ord(c) == 10:
-                        break
-                    if ord(c) == 3:
-                        client.stopThread()
-                        messageListScreen.openScreen(client, session)
-
-                    inputToSend.addChar(c)
-                    reprintScreen(client, buffer, inputToSend)
-                    #toSendMessage += repr(c)
-                #toSendMessage = input('[' + client.getUser().name + ']: ')
-                buffer.addToBuffer('[' + client.getUser().name + ']: '+inputToSend.getBuffer()+'\n')
-                client.sendMessage(inputToSend.getBuffer(), thread_id=thread.uid, thread_type=thread.type)
+            sendThread = Thread(target=send, args=(client,session,thread,buffer,))
+            sendThread.deamon = True
+            sendThread.start()
+            printThread = Thread(target=printLoop, args=(client,buffer,session,))
+            printThread.deamon = True
+            printThread.start()
+            client.listen()
 
         except KeyboardInterrupt:
             client.stopThread()

@@ -293,14 +293,17 @@ CLUT = [  # color look-up table
     ('255', 'eeeeee'),
 ]
 
+
 def _str2hex(hexstr):
     return int(hexstr, 16)
+
 
 def _strip_hash(rgb):
     # Strip leading `#` if exists.
     if rgb.startswith('#'):
         rgb = rgb.lstrip('#')
     return rgb
+
 
 def _create_dicts():
     short2rgb_dict = dict(CLUT)
@@ -309,8 +312,10 @@ def _create_dicts():
         rgb2short_dict[v] = k
     return rgb2short_dict, short2rgb_dict
 
+
 def short2rgb(short):
     return SHORT2RGB_DICT[short]
+
 
 def print_all():
     """ Print all 256 xterm color codes.
@@ -322,6 +327,7 @@ def print_all():
         sys.stdout.write("\033[0m\n")
     print("Printed all codes.")
     print("You can translate a hex or 0-255 code by providing an argument.")
+
 
 def rgb2short(rgb):
     """ Find the closest xterm-256 approximation to the given RGB value.

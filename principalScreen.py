@@ -1,6 +1,7 @@
 from utils import *
 import messageListScreen
 
+
 def openScreen(client, session):
     choice = 0
     while choice<1 or choice>3:

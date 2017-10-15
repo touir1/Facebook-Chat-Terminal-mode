@@ -19,16 +19,19 @@ parser.add_option("-u", "--username", dest="username",
 parser.add_option("-p", "--password", dest="password",
                   help="the password for the facebook account", metavar="PASSWORD")
 
+
 class User:
     def __init__(self, uid, name):
         self.uid = uid
         self.name = name
+
 
 class Session:
     def __init__(self, username, password, session):
         toEncode = username.lower()+':'+password
         self.authdata = hashlib.sha512(toEncode.encode()).hexdigest()
         self.session = session
+
 
 class CustomClient(Client):
     def startThread(self,thread_id):
@@ -41,6 +44,7 @@ class CustomClient(Client):
 
     def stopThread(self):
         self.ThreadStarted = False
+        self.listening = False
 
     def getMessage(self):
         return self.queue.get()
@@ -52,19 +56,15 @@ class CustomClient(Client):
         return not self.ThreadStarted
     
     def onMessage(self, mid, author_id, message, thread_id, thread_type, ts, metadata, msg, **kwargs):
-        print('author_id: '+author_id)
-        print('thread_id: '+thread_id)
-        print('msg: '+msg)
-        print('message: '+message)
-        if self.ThreadStarted and self.ThreadNow == thread_id:
+        if self.ThreadStarted and (self.ThreadNow == author_id) and (author_id != self.uid):
             self.queue.put(message)
-            #print(author_id,' : ',msg)
         pass
 
     def getUser(self):
         if not hasattr(self,'user'):
             self.user = User(self.uid, self.fetchThreadInfo(self.uid)[self.uid].name)
         return self.user
+
 
 def script():
     (options, args) = parser.parse_args()
@@ -150,6 +150,6 @@ def script():
 ##            print(users[msg.author],':',m)
 ##        print('------------------------------------------')
 
+
 if __name__ == "__main__":
     script()
-    

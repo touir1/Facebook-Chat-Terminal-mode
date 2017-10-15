@@ -3,12 +3,14 @@ import sys
 
 non_bmp_map = dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)
 
+
 def to_int(var):
     try:
         result = int(var)
         return result
     except:
         return 0
+
 
 def isInt(var):
     try:
@@ -17,16 +19,19 @@ def isInt(var):
     except:
         return False
 
+
 def console_clear():
     if os.name == 'nt':
         os.system('cls')
     else:
         os.system('clear')
 
+
 def toUTF8(string):
     if string is not None:
         return string.translate(non_bmp_map)
     return None
+
 
 class Buffer:
     def __init__(self, buffer = ""):
@@ -46,6 +51,7 @@ class Buffer:
 
     def clearBuffer(self):
         self.buffer = ""
+
 
 def getchar():
     result = ''
@@ -69,3 +75,12 @@ def getchar():
             result = _unix_getch
 
     return result
+
+
+
+def stopPrint():
+    sys.stdout = open(os.devnull, "w")
+
+
+def startPrint():
+    sys.stdout = sys.__stdout__

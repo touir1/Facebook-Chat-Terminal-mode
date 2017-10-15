@@ -2,12 +2,13 @@ from utils import *
 import principalScreen
 import sendMessageScreen
 
+
 def openScreen(client, session):
-    
+
     users = {}
     offset = 0
     jump = 10
-    
+
     for u in client.fetchAllUsers():
         users[u.uid] = u.name
     users[client.uid] = client.fetchUserInfo(client.uid)[client.uid].name
@@ -25,9 +26,9 @@ def openScreen(client, session):
             print(idx+1,'-',thread.name,'(last: ',users[messages[0].author],'): ',toUTF8(messages[0].text))
 
         print('------------------------------------------')
-        
+
         options = ['b','e']
-        
+
         if offset !=0:
             print('p - previous')
             options.append('p')
@@ -38,10 +39,10 @@ def openScreen(client, session):
         print('e - exit')
 
         choice = input('choice: ')
-        
+
         if choice in options:
             if choice == 'e':
-                break
+                quit()
             elif choice == 'b':
                 principalScreen.openScreen(client, session)
             elif choice =='n':
@@ -51,4 +52,4 @@ def openScreen(client, session):
         elif isInt(choice) and (1 <= to_int(choice) <= jump):
             sendMessageScreen.openScreen(client,session,threads[to_int(choice)-1])
             break
-            
+
