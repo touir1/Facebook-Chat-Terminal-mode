@@ -37,7 +37,7 @@ class CustomClient(Client):
         self.queue = Queue(maxsize=0)
 
     def getThreadName(self):
-        return self.fetchThreadInfo(self.ThreadNow).name
+        return self.fetchThreadInfo(self.ThreadNow)[self.ThreadNow].name
 
     def stopThread(self):
         self.ThreadStarted = False
@@ -52,10 +52,19 @@ class CustomClient(Client):
         return not self.ThreadStarted
     
     def onMessage(self, mid, author_id, message, thread_id, thread_type, ts, metadata, msg, **kwargs):
-        if self.ThreadStarted and self.ThreadNow == author_id:
+        print('author_id: '+author_id)
+        print('thread_id: '+thread_id)
+        print('msg: '+msg)
+        print('message: '+message)
+        if self.ThreadStarted and self.ThreadNow == thread_id:
             self.queue.put(message)
             #print(author_id,' : ',msg)
         pass
+
+    def getUser(self):
+        if not hasattr(self,'user'):
+            self.user = User(self.uid, self.fetchThreadInfo(self.uid)[self.uid].name)
+        return self.user
 
 def script():
     (options, args) = parser.parse_args()

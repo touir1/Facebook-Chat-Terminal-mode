@@ -2,19 +2,6 @@ from utils import *
 import principalScreen
 import sendMessageScreen
 
-class Buffer:
-    def __init__(self, initString):
-        self.string = initString
-
-    def push(self,string):
-        self.string += string
-
-    def getString(self):
-        return self.string
-
-    def flush(self):
-        self.string = ""
-
 def openScreen(client, session):
     
     users = {}
