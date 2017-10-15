@@ -7,13 +7,16 @@ import pickle as pkl
 import hashlib
 import sys
 import principalScreen
+from queue import Queue
+from threading import Thread
+from utils import *
 
 _SESSION_FILE = "sessions.pkl"
 
 parser = OptionParser(usage='Usage: %prog [options]')
 parser.add_option("-u", "--username", dest="username",
                   help="the username for the facebook account", metavar="USER")
-parser.add_option("-v", "--password", dest="password",
+parser.add_option("-p", "--password", dest="password",
                   help="the password for the facebook account", metavar="PASSWORD")
 
 class User:
@@ -27,7 +30,32 @@ class Session:
         self.authdata = hashlib.sha512(toEncode.encode()).hexdigest()
         self.session = session
 
+class CustomClient(Client):
+    def startThread(self,thread_id):
+        self.ThreadNow = thread_id
+        self.ThreadStarted = True
+        self.queue = Queue(maxsize=0)
 
+    def getThreadName(self):
+        return self.fetchThreadInfo(self.ThreadNow).name
+
+    def stopThread(self):
+        self.ThreadStarted = False
+
+    def getMessage(self):
+        return self.queue.get()
+
+    def isThereMessage(self):
+        return not self.queue.empty()
+
+    def isStopThread(self):
+        return not self.ThreadStarted
+    
+    def onMessage(self, mid, author_id, message, thread_id, thread_type, ts, metadata, msg, **kwargs):
+        if self.ThreadStarted and self.ThreadNow == author_id:
+            self.queue.put(message)
+            #print(author_id,' : ',msg)
+        pass
 
 def script():
     (options, args) = parser.parse_args()
@@ -72,7 +100,7 @@ def script():
                 session = s.session
                 index = idx
                 break
-        client = Client(username,password,session_cookies=session)
+        client = CustomClient(username,password,session_cookies=session)
         session = client.getSession()
         if index!=-1:
             sessions[index].session = session
