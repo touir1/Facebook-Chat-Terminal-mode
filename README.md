@@ -7,23 +7,20 @@ Facebook Chat is a python script to chat with facebook account using the termina
 
 ## Usage ##
 
-<!---
-to use Spam Classifier module with a console you need to:
+
+to use Facebook Chat Terminal mode you need to:
 ```
-Usage: spam_detector.py [options]
+Usage: python fbchat_terminal_mode.py [options]
 
 Options:
   -h, --help            show this help message and exit
-  -c FILE, --classifier=FILE
-                        import classifier from file
-  -v FILE, --vectorizer=FILE
-                        import vectorizer from file
-  -m MESSAGE, --message=MESSAGE
-                        required: classify the message given
-  -s SUBJECT, --subject=SUBJECT
-                        required: classify the subject given
+  -p PASSWORD, --password=PASSWORD
+                        the password for the facebook account
+  -u USER, --username=USER
+                        the username for the facebook account
 ```
 
+<!---
 to use Spam Classifier as a web service you need to:
 
 **-Start the web server**
@@ -64,6 +61,7 @@ Facebook chat Terminal Mode is published under the [MIT license](http://www.open
 
 ## Special thanks ##
 
+Fbchat used to get the user info [fbchat: Facebook Chat (Messenger) for Python](https://github.com/carpedm20/fbchat).
 <!---
 csmining.org for providing the dataset used for training my model [csmining: Spam email datasets](http://csmining.org/index.php/spam-email-datasets-.html).
 -->
