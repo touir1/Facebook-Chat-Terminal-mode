@@ -3,7 +3,7 @@
 
 [website](https://touir1.github.io/Facebook-Chat-Terminal-mode/)
 
-Facebook Chat is a python script to chat with facebook account using the terminal
+Facebook Chat is a python script to chat with facebook account using the terminal.
 
 ## Usage ##
 
@@ -57,7 +57,7 @@ message: message of the mail encoded in url format
 
 ## License ##
 
-Facebook chat Terminal Mode is published under the [MIT license](http://www.opensource.org/licenses/mit-license)
+Facebook chat Terminal Mode is published under the [MIT license](http://www.opensource.org/licenses/mit-license).
 
 ## Special thanks ##
 
