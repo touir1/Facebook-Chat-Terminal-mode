@@ -63,7 +63,7 @@ Facebook chat Terminal Mode is published under the [MIT license](http://www.open
 
 Fbchat used to get the user info [fbchat: Facebook Chat (Messenger) for Python](https://github.com/carpedm20/fbchat).
 
-Micah Elliott (http://MicahElliott.com) and Kevin Lange (<k@dakko.us>) for the image-to-ansi.py module.
+Micah Elliott (website: [http://MicahElliott.com](http://MicahElliott.com) and Kevin Lange (email: [k@dakko.us](mailto:k@dakko.us)) for the image-to-ansi.py module.
 <!---
 csmining.org for providing the dataset used for training my model [csmining: Spam email datasets](http://csmining.org/index.php/spam-email-datasets-.html).
 -->
