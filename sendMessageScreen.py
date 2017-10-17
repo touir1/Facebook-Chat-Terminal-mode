@@ -8,6 +8,7 @@ import requests
 from io import BytesIO
 import imageToAnsi
 import sys
+import principalScreen
 
 inputToSend = Buffer()
 
@@ -15,7 +16,7 @@ def printLoop(client,buffer,session):
     try:
         while not client.isStopThread():
             reprintScreen(client, buffer, inputToSend)
-            time.sleep(0.2)
+            time.sleep(0.5)
     except KeyboardInterrupt:
         client.stopThread()
         messageListScreen.openScreen(client, session)
@@ -137,3 +138,29 @@ def openScreen(client,session,thread):
             client.stopThread()
             messageListScreen.openScreen(client,session)
 
+    else:
+        users = {}
+        for u in client.fetchAllUsers():
+            users[u.uid] = u.name
+        users[client.uid] = client.fetchThreadInfo(client.uid)[client.uid].name
+
+        console_clear()
+        buffer.addToBuffer('---- Type /exit to get back to the main menu ----\n')
+        print('---- Type /exit to get back to the main menu ----')
+        print('search for a user: ',end='',flush=True)
+        buffer.addToBuffer('search for a user: ')
+        inputToSend.clearBuffer()
+        reprintScreen(client, buffer, inputToSend)
+        while True:
+            c = getchar()
+            if ord(c) == 13 or ord(c) == 10:
+                break
+            if ord(c) == 3:
+                principalScreen.openScreen(client, session)
+            inputToSend.addChar(c)
+            reprintScreen(client, buffer, inputToSend)
+        buffer.addToBuffer('[' + client.getUser().name + ']: ' + inputToSend.getBuffer() + '\n')
+        if inputToSend.getBuffer() == '/exit':
+            principalScreen.openScreen(client, session)
+        else:
+            print('todo')
