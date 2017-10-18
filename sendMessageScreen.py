@@ -129,9 +129,9 @@ def openScreen(client,session,thread):
             sendThread = Thread(target=send, args=(client,session,thread,buffer,))
             sendThread.deamon = True
             sendThread.start()
-            printThread = Thread(target=printLoop, args=(client,buffer,session,))
-            printThread.deamon = True
-            printThread.start()
+            #printThread = Thread(target=printLoop, args=(client,buffer,session,))
+            #printThread.deamon = True
+            #printThread.start()
             client.listen()
 
         except KeyboardInterrupt:

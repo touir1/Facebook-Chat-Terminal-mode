@@ -9,6 +9,7 @@ import sys
 import principalScreen
 from queue import Queue
 from threading import Thread
+import logging
 from utils import *
 
 _SESSION_FILE = "sessions.pkl"
@@ -109,7 +110,8 @@ def script():
                 session = s.session
                 index = idx
                 break
-        client = CustomClient(username,password,session_cookies=session)
+
+        client = CustomClient(username,password,session_cookies=session,logging_level=logging.ERROR)
         session = client.getSession()
         if index!=-1:
             sessions[index].session = session
