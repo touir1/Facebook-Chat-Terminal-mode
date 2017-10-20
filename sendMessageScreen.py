@@ -68,9 +68,10 @@ def reprintScreen(client=None,buffer=None,inputBuffer=None,lastInput=None):
     print(buffer.getBuffer(), end='', flush=True)
     if client is not None:
         print('[' + client.getUser().name + ']: ', end='', flush=True)
+    print(inputBuffer.getBuffer(), end='', flush=True)
     if lastInput is not None:
         print('\n'+lastInput.getBuffer(), end='', flush=True)
-    print(inputBuffer.getBuffer(), end='', flush=True)
+
 
 
 
@@ -181,7 +182,7 @@ def openScreen(client=None,session=None,thread=None):
                 resultBuffer.addToBuffer(str(i+1)+' - '+u.name+'\n')
             reprintScreen(buffer=buffer, inputBuffer=inputToSend, lastInput=resultBuffer)
         #buffer.addToBuffer('[' + client.getUser().name + ']: ' + inputToSend.getBuffer() + '\n')
-        chosenThread = client.fetchThreadInfo(result[choice-1].uid)
+        chosenThread = client.fetchThreadInfo(result[to_int(choice)-1].uid)[result[to_int(choice)-1].uid]
 
         openScreen(client=client,session=session,thread=chosenThread)
 
