@@ -1,6 +1,5 @@
 from utils import *
-import os
-from threading import Thread,Timer
+from threading import Thread
 import time
 import messageListScreen
 from PIL import Image
@@ -9,10 +8,10 @@ from io import BytesIO
 import imageToAnsi
 import sys
 import principalScreen
+from classUtil import *
 
-inputToSend = Buffer()
 
-def printLoop(client,buffer,session):
+def printLoop(client=None,buffer=None,session=None,inputToSend=None):
     try:
         while not client.isStopThread():
             reprintScreen(client, buffer, inputToSend)
@@ -21,7 +20,8 @@ def printLoop(client,buffer,session):
         client.stopThread()
         messageListScreen.openScreen(client, session)
 
-def receive(client,buffer):
+
+def receive(client=None,buffer=None,inputToSend=None):
     threadName = client.getThreadName()
     while not client.isStopThread():
 
@@ -33,7 +33,8 @@ def receive(client,buffer):
             reprintScreen(client, buffer, inputToSend)
         #time.sleep(0.2)
 
-def send(client,session,thread,buffer):
+
+def send(client=None,session=None,thread=None,buffer=None,inputToSend=None):
     try:
         while not client.isStopThread():
             # print('[' + client.getUser().name + ']: ', end='', flush=True)
@@ -62,11 +63,15 @@ def send(client,session,thread,buffer):
         messageListScreen.openScreen(client, session)
 
 
-def reprintScreen(client,buffer,inputBuffer):
+def reprintScreen(client=None,buffer=None,inputBuffer=None,lastInput=None):
     console_clear()
     print(buffer.getBuffer(), end='', flush=True)
-    print('[' + client.getUser().name + ']: ', end='', flush=True)
-    print(inputToSend.getBuffer(), end='', flush=True)
+    if client is not None:
+        print('[' + client.getUser().name + ']: ', end='', flush=True)
+    if lastInput is not None:
+        print('\n'+lastInput.getBuffer(), end='', flush=True)
+    print(inputBuffer.getBuffer(), end='', flush=True)
+
 
 
 def printImage(image):
@@ -80,8 +85,9 @@ def printImage(image):
     sys.stdout.write("\n")
 
 
-def openScreen(client,session,thread):
+def openScreen(client=None,session=None,thread=None):
     buffer = Buffer()
+    inputToSend = Buffer()
 
     doPrintImage = False
     if thread is not None:
@@ -123,10 +129,10 @@ def openScreen(client,session,thread):
                     pass
 
             client.startThread(thread.uid)
-            receiveThread = Thread(target=receive, args=(client,buffer,))
+            receiveThread = Thread(target=receive, args=(client,buffer,inputToSend,))
             receiveThread.deamon = True
             receiveThread.start()
-            sendThread = Thread(target=send, args=(client,session,thread,buffer,))
+            sendThread = Thread(target=send, args=(client,session,thread,buffer,inputToSend,))
             sendThread.deamon = True
             sendThread.start()
             #printThread = Thread(target=printLoop, args=(client,buffer,session,))
@@ -139,10 +145,10 @@ def openScreen(client,session,thread):
             messageListScreen.openScreen(client,session)
 
     else:
-        users = {}
+        users = []
         for u in client.fetchAllUsers():
-            users[u.uid] = u.name
-        users[client.uid] = client.fetchThreadInfo(client.uid)[client.uid].name
+            users.append(User(uid=u.uid,name=u.name))
+        users.append(User(uid=client.uid,name=client.fetchThreadInfo(client.uid)[client.uid].name))
 
         console_clear()
         buffer.addToBuffer('---- Type /exit to get back to the main menu ----\n')
@@ -150,17 +156,32 @@ def openScreen(client,session,thread):
         print('search for a user: ',end='',flush=True)
         buffer.addToBuffer('search for a user: ')
         inputToSend.clearBuffer()
-        reprintScreen(client, buffer, inputToSend)
+        resultBuffer = Buffer()
+        result = []
+        choice = 0
+        reprintScreen(buffer = buffer, inputBuffer = inputToSend)
         while True:
             c = getchar()
             if ord(c) == 13 or ord(c) == 10:
-                break
+                if inputToSend.getBuffer() == '/exit':
+                    principalScreen.openScreen(client, session)
+                    break
+                else:
+                    choice = input('choose a person\'s index: ')
+                    if isInt(choice):
+                        v = to_int(choice)
+                        if len(result) >= v >= 1:
+                            break
             if ord(c) == 3:
                 principalScreen.openScreen(client, session)
             inputToSend.addChar(c)
-            reprintScreen(client, buffer, inputToSend)
-        buffer.addToBuffer('[' + client.getUser().name + ']: ' + inputToSend.getBuffer() + '\n')
-        if inputToSend.getBuffer() == '/exit':
-            principalScreen.openScreen(client, session)
-        else:
-            print('todo')
+            result = [u for u in users if containByWords(inputToSend.getBuffer(), u.name)][:10]
+            resultBuffer.clearBuffer()
+            for i,u in enumerate(result):
+                resultBuffer.addToBuffer(str(i+1)+' - '+u.name+'\n')
+            reprintScreen(buffer=buffer, inputBuffer=inputToSend, lastInput=resultBuffer)
+        #buffer.addToBuffer('[' + client.getUser().name + ']: ' + inputToSend.getBuffer() + '\n')
+        chosenThread = client.fetchThreadInfo(result[choice-1].uid)
+
+        openScreen(client=client,session=session,thread=chosenThread)
+

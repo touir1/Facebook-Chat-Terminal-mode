@@ -1,16 +1,12 @@
 from fbchat import Client
 from fbchat.models import *
 from optparse import OptionParser
-import os
 import getpass
 import pickle as pkl
-import hashlib
-import sys
 import principalScreen
 from queue import Queue
-from threading import Thread
 import logging
-from utils import *
+from classUtil import *
 
 _SESSION_FILE = "sessions.pkl"
 
@@ -19,20 +15,6 @@ parser.add_option("-u", "--username", dest="username",
                   help="the username for the facebook account", metavar="USER")
 parser.add_option("-p", "--password", dest="password",
                   help="the password for the facebook account", metavar="PASSWORD")
-
-
-class User:
-    def __init__(self, uid, name):
-        self.uid = uid
-        self.name = name
-
-
-class Session:
-    def __init__(self, username, password, session):
-        toEncode = username.lower()+':'+password
-        self.authdata = hashlib.sha512(toEncode.encode()).hexdigest()
-        self.session = session
-
 
 class CustomClient(Client):
     def startThread(self,thread_id):

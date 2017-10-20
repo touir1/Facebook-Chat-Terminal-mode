@@ -33,24 +33,13 @@ def toUTF8(string):
     return None
 
 
-class Buffer:
-    def __init__(self, buffer = ""):
-        self.buffer = buffer
+def containByWords(substring,string):
 
-    def getBuffer(self):
-        return self.buffer
-
-    def addChar(self,char):
-        if char == '\b':
-            self.buffer = self.buffer[:-1]
-        else:
-            self.buffer += char
-
-    def addToBuffer(self,toAdd):
-        self.buffer += toAdd
-
-    def clearBuffer(self):
-        self.buffer = ""
+    sub = substring.lower().split(' ')
+    sub.sort()
+    s = string.lower().split(' ')
+    s.sort()
+    return ' '.join(sub) in ' '.join(s)
 
 
 def getchar():

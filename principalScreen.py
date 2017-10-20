@@ -1,5 +1,6 @@
 from utils import *
 import messageListScreen
+import sendMessageScreen
 
 
 def openScreen(client, session):
@@ -16,3 +17,5 @@ def openScreen(client, session):
         quit()
     elif choice ==1:
         messageListScreen.openScreen(client, session)
+    elif choice ==2:
+        sendMessageScreen.openScreen(client=client, session=session)
