@@ -42,7 +42,7 @@ def openScreen(client, session):
 
         if choice in options:
             if choice == 'e':
-                quit()
+                break
             elif choice == 'b':
                 principalScreen.openScreen(client, session)
             elif choice =='n':
