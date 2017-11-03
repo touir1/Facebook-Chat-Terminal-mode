@@ -13,7 +13,8 @@ def openScreen(client, session):
         users[u.uid] = u.name
     users[client.uid] = client.fetchUserInfo(client.uid)[client.uid].name
 
-    #todo repare
+    #todo
+    #repare
     #go back to menu
     principalScreen.openScreen(client,session)
     #end get back to menu
@@ -22,6 +23,21 @@ def openScreen(client, session):
         console_clear()
         print('list of unread messages:')
         #buffer = Buffer()
+        threads = []
+        now = 0
+        got = 10
+        while(now<jump and got == jump):
+            result = client.fetchThreadList(offset=offset, limit=jump)
+            got = len(result)
+            for idx, thread in enumerate(result):
+                is_read = client.fetchThreadMessages(thread_id=thread.uid, limit=1)[0].is_read
+                if not is_read:
+                    threads.append(thread)
+                    now += 1
+                if now == jump:
+                    break
+            if (now<jump and got == jump):
+                offset += jump
         threads = client.fetchUnread()
         for idx, thread in enumerate(threads):
             messages = client.fetchThreadMessages(thread_id= thread.uid, limit=1)
