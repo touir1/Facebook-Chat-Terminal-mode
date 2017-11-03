@@ -16,7 +16,7 @@ def openScreen(client, session):
     #todo
     #repare
     #go back to menu
-    principalScreen.openScreen(client,session)
+    #principalScreen.openScreen(client,session)
     #end get back to menu
 
     while True:
