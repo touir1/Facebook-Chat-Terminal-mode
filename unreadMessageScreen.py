@@ -13,7 +13,6 @@ def openScreen(client, session):
         users[u.uid] = u.name
     users[client.uid] = client.fetchUserInfo(client.uid)[client.uid].name
 
-    #todo
     #repare
     #go back to menu
     #principalScreen.openScreen(client,session)
