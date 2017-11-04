@@ -90,6 +90,11 @@ def openScreen(client=None,session=None,thread=None):
     buffer = Buffer()
     inputToSend = Buffer()
 
+    users = []
+    for u in client.fetchAllUsers():
+        users.append(User(uid=u.uid, name=u.name))
+    users.append(User(uid=client.uid, name=client.fetchThreadInfo(client.uid)[client.uid].name))
+
     doPrintImage = False
     if thread is not None:
         messages = client.fetchThreadMessages(thread_id=thread.uid, limit=10)
@@ -98,7 +103,12 @@ def openScreen(client=None,session=None,thread=None):
         print('---- Type /exit to get back to messages list menu ----')
         try:
             for msg in reversed(messages):
-                toPrintMsg = '['+client.fetchThreadInfo(msg.author)[msg.author].name+']: '+toUTF8(msg.text)
+                names = [u.name for u in users if u.uid == msg.author]
+                toPrintMsg = ''
+                if len(names)>0:
+                    toPrintMsg = '[' + names[0] + ']: ' + toUTF8(msg.text)
+                else:
+                    toPrintMsg = '['+client.fetchThreadInfo(msg.author)[msg.author].name+']: '+toUTF8(msg.text)
                 print(toPrintMsg)
                 buffer.addToBuffer(toPrintMsg+'\n')
                 try:
@@ -146,10 +156,6 @@ def openScreen(client=None,session=None,thread=None):
             messageListScreen.openScreen(client,session)
 
     else:
-        users = []
-        for u in client.fetchAllUsers():
-            users.append(User(uid=u.uid,name=u.name))
-        users.append(User(uid=client.uid,name=client.fetchThreadInfo(client.uid)[client.uid].name))
 
         console_clear()
         buffer.addToBuffer('---- Type /exit to get back to the main menu ----\n')

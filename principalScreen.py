@@ -10,16 +10,16 @@ def openScreen(client, session):
         console_clear()
         print('choose a number:')
         print('1- open message list')
-        print('2- open unread messages')
-        print('3- send a message')
-        print('4- exit')
+        #print('2- open unread messages')
+        print('2- send a message')
+        print('3- exit')
         choice = to_int(input('\nchoice: '))
 
-    if choice == 4:
+    if choice == 3:
         quit()
     elif choice ==1:
         messageListScreen.openScreen(client, session)
+    #elif choice ==2:
+    #    unreadMessageScreen.openScreen(client, session)
     elif choice ==2:
-        unreadMessageScreen.openScreen(client, session)
-    elif choice ==3:
         sendMessageScreen.openScreen(client=client, session=session)

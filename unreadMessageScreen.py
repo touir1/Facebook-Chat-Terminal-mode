@@ -35,7 +35,8 @@ def openScreen(client, session):
                     now += 1
                 if now == jump:
                     break
-            if (now<jump and got == jump):
+            #print('now:',now,' offset:',offset)
+            if now<jump and got == jump:
                 offset += jump
         threads = client.fetchUnread()
         for idx, thread in enumerate(threads):
