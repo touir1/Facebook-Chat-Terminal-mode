@@ -6,7 +6,7 @@ import unreadMessageScreen
 
 def openScreen(client, session):
     choice = 0
-    while choice<1 or choice>4:
+    while choice<1 or choice>3:
         console_clear()
         print('choose a number:')
         print('1- open message list')
