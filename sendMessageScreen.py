@@ -167,6 +167,8 @@ def openScreen(client=None,session=None,thread=None):
         result = []
         choice = 0
         reprintScreen(buffer = buffer, inputBuffer = inputToSend)
+        #todo
+        #bug with /exit in selection of name results
         while True:
             c = getchar()
             if ord(c) == 13 or ord(c) == 10:
@@ -182,6 +184,8 @@ def openScreen(client=None,session=None,thread=None):
             if ord(c) == 3:
                 principalScreen.openScreen(client, session)
             inputToSend.addChar(c)
+            #todo
+            #optimise by distance to the input
             result = [u for u in users if containByWords(inputToSend.getBuffer(), u.name)][:10]
             resultBuffer.clearBuffer()
             for i,u in enumerate(result):
