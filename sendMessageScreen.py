@@ -167,14 +167,13 @@ def openScreen(client=None,session=None,thread=None):
         result = []
         choice = 0
         reprintScreen(buffer = buffer, inputBuffer = inputToSend)
-        #todo
-        #bug with /exit in selection of name results
+
         while True:
             c = getchar()
             if ord(c) == 13 or ord(c) == 10:
                 if inputToSend.getBuffer() == '/exit':
                     principalScreen.openScreen(client, session)
-                    break
+                    return
                 else:
                     choice = input('choose a person\'s index: ')
                     if isInt(choice):
