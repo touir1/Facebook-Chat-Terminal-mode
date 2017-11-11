@@ -73,6 +73,11 @@ def reprintScreen(client=None,buffer=None,inputBuffer=None,lastInput=None):
         print('\n'+lastInput.getBuffer(), end='', flush=True)
 
 
+compare_with = ""
+
+
+def sort_key_result(user):
+    return levenshtein(user.name,compare_with)
 
 
 def printImage(image):
@@ -84,7 +89,6 @@ def printImage(image):
             sys.stdout.write("\033[48;5;%sm " % short)
         sys.stdout.write("\033[0m\n")
     sys.stdout.write("\n")
-
 
 def openScreen(client=None,session=None,thread=None):
     buffer = Buffer()
@@ -183,9 +187,8 @@ def openScreen(client=None,session=None,thread=None):
             if ord(c) == 3:
                 principalScreen.openScreen(client, session)
             inputToSend.addChar(c)
-            #todo
-            #optimise by distance to the input
-            result = [u for u in users if containByWords(inputToSend.getBuffer(), u.name)][:10]
+
+            result = sorted([u for u in users if containByWords(inputToSend.getBuffer(), u.name)],key=sort_key_result)[:10]
             resultBuffer.clearBuffer()
             for i,u in enumerate(result):
                 resultBuffer.addToBuffer(str(i+1)+' - '+u.name+'\n')
