@@ -1,4 +1,4 @@
 requests=2.18.4
-numpy==1.13.1+mkl
+numpy==1.13.1
 Pillow==4.2.1
 fbchat==1.0.19
