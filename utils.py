@@ -31,7 +31,7 @@ def console_clear():
 def toUTF8(string):
     if string is not None:
         return string.translate(non_bmp_map)
-    return None
+    return 'None'
 
 
 def containByWords(substring,string):

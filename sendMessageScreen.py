@@ -109,11 +109,12 @@ def openScreen(client=None,session=None,thread=None):
             for msg in reversed(messages):
                 names = [u.name for u in users if u.uid == msg.author]
                 toPrintMsg = ''
-                #todo check if msg is None
                 if len(names)>0:
-                    toPrintMsg = '[' + names[0] + ']: ' + toUTF8(msg.text)
+                    toPrintMsg = '[' + names[0] + ']: ' \
+                                 + toUTF8(msg.text)
                 else:
-                    toPrintMsg = '['+client.fetchThreadInfo(msg.author)[msg.author].name+']: '+toUTF8(msg.text)
+                    toPrintMsg = '[' + client.fetchThreadInfo(msg.author)[msg.author].name+']: '\
+                                 + toUTF8(msg.text)
                 print(toPrintMsg)
                 buffer.addToBuffer(toPrintMsg+'\n')
                 try:
