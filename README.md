@@ -1,5 +1,5 @@
 # Facebook Chat (Terminal mode)
-[![npm](https://img.shields.io/npm/l/date-2.svg?style=flat-square)]()
+[![npm](https://img.shields.io/npm/l/date-2.svg?style=flat-square)]() [![npm](https://img.shields.io/badge/Langage-Python-blue.svg)](https://en.wikipedia.org/wiki/Python_(programming_language))
 
 [website](https://touir1.github.io/Facebook-Chat-Terminal-mode/)
 
